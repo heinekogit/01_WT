@@ -1,0 +1,6 @@
+cd 01
+perl pre01_collection01.pl
+perl pre02_ASG_check04.pl
+perl pre03_check08.pl
+perl work07.pl
+
