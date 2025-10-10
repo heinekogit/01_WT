@@ -34,6 +34,8 @@ use Image::Size 'imgsize';
 
     my @log;
     
+    our %opt;    # UUIDやmodifiedを外部から指定したい場合の受け皿
+    
 	my @chosha_mei;
     my @chosha_temp;
     my @go_opf_chosha;
@@ -282,6 +284,18 @@ use Image::Size 'imgsize';
    			 s/▼xhtmlファイルタグ印字位置▼/join "", @cut_xhtml_list/eg;   		 #環境変数から用意
  
    			 s/▼spineタグ印字位置▼/join "", @cut_spine_list/eg;   				 #環境変数から用意
+
+    # 生成は孫サブルーチンに委譲（テスト用に上書き可）
+    my ($uuid, $modified) = exists $opt{force_uuid_modified}
+        ? @{ $opt{force_uuid_modified} }   # 例: ['urn:uuid:...', '2025-10-10T06:00:00Z']
+        : gen_uuid_and_modified();
+
+    # プレースホルダ置換（置換ロジックはこのサブルーチン内に集約）
+    s/●UUID●/$uuid/g;
+    s/●DCTERMS●/$modified/g;
+
+
+
    		 }
    		 
    	@go_opf_chosha = ();											#opfに埋め込む著者情報の配列を初期化
@@ -417,4 +431,29 @@ sub umekomi {
 
 # 						    ===========================================================================
 
+# ---- 生成専用：UUID(urn:uuid:...) と dcterms:modified(UTC) を返す ----
+use POSIX qw(strftime);
+
+sub gen_uuid_and_modified {
+    my $uuid = eval {
+        require Data::UUID;
+        my $ug = Data::UUID->new;
+        'urn:uuid:' . lc $ug->create_str();
+    } || do {
+        # フォールバック: 外部依存なし v4風
+        my @h = (0..9, 'a'..'f');
+        my $r = sub { join '', map { $h[int rand @h] } 1..$_[0] };
+        sprintf(
+            'urn:uuid:%s-%s-4%s-%s%s-%s',
+            $r->(8), $r->(4), $r->(3),
+            (qw(8 9 a b))[int rand 4], $r->(3),
+            $r->(12)
+        );
+    };
+
+    my $modified = strftime("%Y-%m-%dT%H:%M:%SZ", gmtime);  # UTC/Z
+
+    # 返却：配列 or ハッシュ、好きな方で。ここでは配列を採用
+    return ($uuid, $modified);
+}
 
