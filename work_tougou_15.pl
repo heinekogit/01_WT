@@ -297,8 +297,6 @@ use Image::Size 'imgsize';
     # プレースホルダ置換（置換ロジックはこのサブルーチン内に集約）
     s/●UUID●/$uuid/g;
 
-
-
    		 }
    		 
    	@go_opf_chosha = ();											#opfに埋め込む著者情報の配列を初期化
