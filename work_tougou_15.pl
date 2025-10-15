@@ -270,6 +270,13 @@ use Image::Size 'imgsize';
    	 push(my @cut_img_list, @img_list[0..$image_count]);   					 #画像枚数だけ、imgタグを出力（imageだけ１回少なく）
    	 push(my @cut_xhtml_list, @xhtml_list[0..$page_count]);   				 #画像枚数だけ、xhtmlタグを出力
    	 push(my @cut_spine_list, @spine_list[0..$page_count]);   				 #画像枚数だけ、spineタグを出力
+   	 
+   	 my ($uuid, $modified);
+   	 if (exists $opt{force_uuid_modified}) {
+   	     ($uuid, $modified) = @{ $opt{force_uuid_modified} };
+   	 } else {
+   	     ($uuid, $modified) = gen_uuid_and_modified();
+   	 }
    				 
 #   	 print @cut_img_list;   												 #確認用
 
@@ -286,9 +293,6 @@ use Image::Size 'imgsize';
    			 s/▼spineタグ印字位置▼/join "", @cut_spine_list/eg;   				 #環境変数から用意
 
     # 生成は孫サブルーチンに委譲（テスト用に上書き可）
-    my ($uuid, $modified) = exists $opt{force_uuid_modified}
-        ? @{ $opt{force_uuid_modified} }   # 例: ['urn:uuid:...', '2025-10-10T06:00:00Z']
-        : gen_uuid_and_modified();
 
     # プレースホルダ置換（置換ロジックはこのサブルーチン内に集約）
     s/●UUID●/$uuid/g;
