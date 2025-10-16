@@ -41,6 +41,7 @@ use Image::Size 'imgsize';
     my @go_opf_chosha;
     
     my $ichi_height;
+    my $ichi_width;
         
 	my @mate_folders;
 
@@ -187,6 +188,8 @@ use Image::Size 'imgsize';
    	 # .jpg のサイズを取得
    		 (my $width, $ichi_height) = imgsize("04_output/$koumoku_content[47]/item/image/i-001.jpg");		#パターンa	001を直で指定	イキ
 
+   		 $ichi_width = $width;
+
 #   	 print $xhtml_one[0];   						 #確認用
 
    	 foreach(@xhtml_one){
@@ -291,6 +294,8 @@ use Image::Size 'imgsize';
    			 s/▼xhtmlファイルタグ印字位置▼/join "", @cut_xhtml_list/eg;   		 #環境変数から用意
  
    			 s/▼spineタグ印字位置▼/join "", @cut_spine_list/eg;   				 #環境変数から用意
+   			 s/▼縦サイズ▼/$ichi_height/g;    # original-resolution height (page 1)
+   			 s/▼横サイズ▼/$ichi_width/g;    # original-resolution width (page 1)
 
     # 生成は孫サブルーチンに委譲（テスト用に上書き可）
 
@@ -457,4 +462,5 @@ sub gen_uuid_and_modified {
     # 返却：配列 or ハッシュ、好きな方で。ここでは配列を採用
     return ($uuid, $modified);
 }
+
 
