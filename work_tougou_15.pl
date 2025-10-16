@@ -301,6 +301,8 @@ use Image::Size 'imgsize';
 
     # プレースホルダ置換（置換ロジックはこのサブルーチン内に集約）
     s/●UUID●/$uuid/g;
+	s/●DCTERMS●/$modified/g;    # dcterms:modified
+
 
    		 }
    		 
